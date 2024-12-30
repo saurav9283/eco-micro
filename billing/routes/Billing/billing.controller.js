@@ -1,22 +1,26 @@
 const { CreateBillingService } = require("./billing.services");
-const RabbitConnect = require('../../utils/Rabbitmq');
 
 module.exports = {
-  CreateBillingController: async (data) => {
-    const { customer_id, billing_account_id, billing_address, price } = data;
+  CreateBillingController: async (req, res) => {
     try {
-      await CreateBillingService(data);
+      CreateBillingService(req.body, (err, data) => {
+        if (err) {
+          res.status(400).json({
+            message: "Bad request"
+          });
+        } else {
+          res.status(200).json({
+            data: data
+          });
+        }
+      });
 
-      console.log('Billing processed successfully');
-
-      await RabbitConnect.publishToQueue('shipping.shipping_label_created', JSON.stringify({
-        customer_id,
-        billing_account_id,
-        billing_address,
-        price,
-      }));
     } catch (error) {
-      console.error('Error in billing controller:', error);
+      console.log(error);
+      res.status(500).json({
+        message: "Internal server error"
+      });
+
     }
   }
-};
+}

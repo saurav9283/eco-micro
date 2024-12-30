@@ -48,15 +48,15 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-RabbitConnect.subscribeToQueue("order-accept", async(message) => {
-  try {
-    console.log('Received message: for user dashboard order accept', JSON.parse(message));
-    const { user_id, providerName } = JSON.parse(message);
-    await updateOnOrderNotificationService(user_id, providerName);
-  } catch (error) {
-    console.error('Error processing RabbitMQ message:', error);
-  }
-})
+// RabbitConnect.subscribeToQueue("order-accept", async(message) => {
+//   try {
+//     console.log('Received message: for user dashboard order accept', JSON.parse(message));
+//     const { user_id, providerName } = JSON.parse(message);
+//     await updateOnOrderNotificationService(user_id, providerName);
+//   } catch (error) {
+//     console.error('Error processing RabbitMQ message:', error);
+//   }
+// })
 
 RabbitConnect.connect();
 

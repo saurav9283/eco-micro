@@ -1,8 +1,7 @@
 const express = require('express');
+const { CreateSalesOrderController } = require('./slaes.controller');
 const router = express.Router();
-const { GetwayCreateOrderService } = require('./sales.services');
-const { GetListOfOrderListController } = require('./slaes.controller');
 
-router.post('/sales/orders', GetwayCreateOrderService)
-// router.get('/sales/products' , GetListOfOrderListController)
+router.post('/sales/orders', CreateSalesOrderController)
+
 module.exports = router;

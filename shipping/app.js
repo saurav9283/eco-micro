@@ -9,7 +9,7 @@ var cors = require("cors");
 const RabbitConnect = require('./utils/Rabbitmq.js');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var CreateShippingRouter  = require('./routes/Shipping/shipping.router.js');
+var CreateShippingRouter = require('./routes/Shipping/shipping.router.js');
 
 var app = express();
 const server = http.createServer(app);
@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('v1/api' , CreateShippingRouter);
+app.use('/api/v1', CreateShippingRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -47,6 +47,19 @@ app.use(function (err, req, res, next) {
 });
 
 RabbitConnect.connect();
+
+RabbitConnect.connect()
+  .then(() => {
+    console.log('Connected to RabbitMQ');
+    RabbitConnect.subscribeToQueue('sales.order_placed', (message) => {
+      console.log('Message received:', message);
+    });
+    RabbitConnect.subscribeToQueue('billing.order_billed')
+  })
+  .catch((error) => {
+    console.error('Error initializing RabbitMQ:', error);
+  });
+
 
 const PORT = '9000';
 server.listen(PORT, () => {

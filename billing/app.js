@@ -10,7 +10,7 @@ const RabbitConnect = require('./utils/Rabbitmq.js');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const CreateBillingRouter = require('./routes/Billing/billing.router.js');
-const { CreateBillingController } = require('./routes/Billing/billing.controller.js');
+// const { handleEvent } = require('./processer/handle-oder-placed.js');
 
 var app = express();
 const server = http.createServer(app);
@@ -47,21 +47,18 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-RabbitConnect.subscribeToQueue("billing.order_billed", async (message, channel) => {
-  try {
-    console.log('Received billing message:', JSON.parse(message));
 
-    const { customer_id, billing_account_id, billing_address, price } = JSON.parse(message);
+// RabbitConnect.connect();
 
-    await CreateBillingController({ customer_id, billing_account_id, billing_address, price });
-
-    channel?.ack(message);
-  } catch (error) {
-    console.error('Error processing RabbitMQ message:', error);
-  }
-});
-
-RabbitConnect.connect();
+RabbitConnect.connect()
+  .then(() => {
+    RabbitConnect.subscribeToQueue('sales.order_placed', (message) => {
+      console.log('Message received:', message);
+    });
+  })
+  .catch((error) => {
+    console.error('Error initializing RabbitMQ:', error);
+  });
 
 const PORT = '8000';
 server.listen(PORT, () => {
