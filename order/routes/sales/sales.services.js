@@ -117,11 +117,11 @@ module.exports = {
             if (error) {
                 return callback(error);
             }
-            if(results.affectedRows === 0) {
+            if (results.affectedRows === 0) {
                 console.log('Order updated successfully in the database');
                 return callback(new Error('Order not found'));
             }
-            
+
         });
     },
 
@@ -135,11 +135,11 @@ module.exports = {
             if (error) {
                 return callback(error);
             }
-            if(results.affectedRows === 0) {
+            if (results.affectedRows === 0) {
                 console.log('Order updated successfully in the database');
                 return callback(new Error('Order not found'));
             }
-            
+
         });
     },
 
@@ -153,11 +153,39 @@ module.exports = {
             if (error) {
                 return callback(error);
             }
-            if(results.affectedRows === 0) {
+            if (results.affectedRows === 0) {
                 console.log('Order updated successfully in the database');
                 return callback(new Error('Order not found'));
             }
-            
+
         });
     },
+
+    GetListProductsWithPriceService: async (product_id, price, callback) => {
+        console.log('product_id,price: ', product_id, price);
+        const Filter_PRICE = process.env.Filter_PRICE.replace('<total_price>', price);
+        console.log('Filter_PRICE: ', Filter_PRICE);
+        pool.query(Filter_PRICE, [], (error, results) => {
+            if (error) {
+                return callback(error);
+            }
+            console.log('results: ', results);
+            if (results.length === 0) {
+                return callback(new Error('Product not found'));
+            }
+            const filteredProducts = results.map((product) => {
+                return {
+                    product_id: product_id,
+                    price: price,
+                    Status: product.Status,
+                    order_id: product.order_id,
+                    customer_id: product.customer_id,
+                };
+            });
+            console.log('filteredProducts: ', filteredProducts);
+
+            return callback(null, filteredProducts);
+        });
+
+    }
 };

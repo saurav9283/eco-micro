@@ -83,11 +83,11 @@ module.exports = {
                                         callback(err, null);
                                     } else {
                                         const Update_Order_Status = process.env.UPDATE_ORDER_STATUS.replace('<order_id>', order_id);
-                                        pool.query(Update_Order_Status, async(err, statusResult) => {
+                                        pool.query(Update_Order_Status, async (err, statusResult) => {
                                             if (err) {
                                                 callback(err, null);
-                                            } 
-                                            else if(statusResult.affectedRows > 0){
+                                            }
+                                            else if (statusResult.affectedRows > 0) {
                                                 const OrderShipped = {
                                                     order_id,
                                                     type: 'shipping.shipping_label_created'
@@ -108,5 +108,19 @@ module.exports = {
             console.log('error: ', error);
             callback(error, null);
         }
+    },
+
+    GetListofShippingService: async (product_id, quantityOnHand, callback) => {
+        console.log('product_id, quantityOnHand: ', product_id, quantityOnHand);
+        const Get_Product = process.env.GET_PRODUCT_DETAILS.replace('<product_id>', product_id)
+            .replace('<quantity_on_hand>', quantityOnHand);
+        // console.log('Get_Product: ', Get_Product);
+        pool.query(Get_Product, (err, result) => {
+            if (err) {
+                callback(err, null);
+            } else {
+                callback(null, result);
+            }
+        });
     }
 }

@@ -116,5 +116,28 @@ module.exports = {
         });
 
 
+    },
+
+    GetListBalanceAccountService: (billing_account_id, card_number, availableBalance, callback) => {
+        console.log('billing_account_id, card_number, availableBalance: ', billing_account_id, card_number, availableBalance);
+        try {
+            const Get_List_Balance_Account = process.env.GET_LIST_BALANCE_ACCOUNT
+                .replace('<billing_account_id>', billing_account_id)
+                .replace('<card_number>', card_number)
+                .replace('<availableBalance>', availableBalance);
+            // console.log('Get_List_Balance_Account: ', Get_List_Balance_Account);
+
+            pool.query(Get_List_Balance_Account, (err, result) => {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    callback(null, result);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            callback(error, null);
+        }
     }
 }
