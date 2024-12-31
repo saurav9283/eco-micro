@@ -131,5 +131,8 @@ module.exports = {
             console.log(error);
             callback(error, null);
         }
+    },
+
+    RefundedService: (order_id, callback) => {
     }
 }

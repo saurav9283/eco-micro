@@ -12,7 +12,14 @@ const handleEvent = async (message) => {
                     console.log(result, "Billing Processed Successfully");
                 }
             });
-        } else {
+        } 
+        else if(message.type === "billing.order_refunded")
+        {
+            console.log('Refund Processed Successfully');
+            RefundedService(message.order_id, (err, result) => {
+            });
+        }
+        else {
             console.warn('Unknown event type:', message.type);
         }
     } catch (error) {

@@ -187,5 +187,6 @@ module.exports = {
             return callback(null, filteredProducts);
         });
 
-    }
+    },
+
 };
