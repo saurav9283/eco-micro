@@ -63,8 +63,6 @@ async function publishToExchange(exchangeName, data) {
     console.log(`Message published to exchange:=-=- ${exchangeName}`);
 }
 
-
-
 module.exports = {
     subscribeToQueue,
     publishToExchange,

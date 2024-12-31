@@ -1,4 +1,4 @@
-const { BillingProcessService } = require("../routes/Billing/billing.services");
+const { BillingProcessService, RefundedService } = require("../routes/Billing/billing.services");
 
 const handleEvent = async (message) => {
     try {
@@ -16,7 +16,15 @@ const handleEvent = async (message) => {
         else if(message.type === "billing.order_refunded")
         {
             console.log('Refund Processed Successfully');
-            RefundedService(message.order_id, (err, result) => {
+            RefundedService(message.order_id,message.price, (err, result) => {
+                if (err) {
+                    console.log(err);
+                    return err;
+                } else {
+                    console.log(result, "Refund Processed Successfully");
+                    return;
+                }
+
             });
         }
         else {

@@ -6,7 +6,7 @@ const handleEvent = async (message) => {
 
         if (message.type === "billing.order_billed") {
             console.log(`Processing order: ${message.order_id}`);
-            ShippingService(message.order_id, (err, data) => {
+            ShippingService(message.order_id,message.price, (err, data) => {
                 if (err) {
                     console.error('Error processing order:', err);
                     return;

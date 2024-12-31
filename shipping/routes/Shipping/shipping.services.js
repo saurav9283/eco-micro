@@ -30,7 +30,7 @@ module.exports = {
         }
     },
 
-    ShippingService: async (order_id, callback) => {
+    ShippingService: async (order_id,total_amount, callback) => {
         console.log('order_id: ', order_id);
         try {
             const Billing_Details = process.env.BILLING_DETAILS.replace('<order_id>', order_id);
@@ -68,6 +68,7 @@ module.exports = {
                                 const orderRefundedMessage = {
                                     order_id,
                                     type: 'billing.order_refunded',
+                                    price: total_amount
                                 };
                                 console.log('orderRefundedMessage: ', orderRefundedMessage);
                                 const RabbitConnect = await getRabbitConnect();

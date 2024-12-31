@@ -90,6 +90,7 @@ module.exports = {
                                     const orderBilledMessage = {
                                         order_id,
                                         type: 'billing.order_billed',
+                                        price: data.price,
                                     };
                                     console.log('orderBilledMessage: ', orderBilledMessage);
                                     const RabbitConnect = await getRabbitConnect();
@@ -99,7 +100,7 @@ module.exports = {
                                 }
                             });
                         }
-                        
+
 
                     });
 
@@ -133,6 +134,55 @@ module.exports = {
         }
     },
 
-    RefundedService: (order_id, callback) => {
+    RefundedService: (order_id, price, callback) => {
+        const Billing_Details = process.env.GET_BILLING_DETAILS
+            .replace('<order_id>', order_id);
+        console.log('Billing_Details: ', Billing_Details);
+        pool.query(Billing_Details, (err, result) => {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                console.log('Billing Details:', result);
+                const billing_account_id = result[0].billing_account_id;
+                console.log('billing_account_id: ', billing_account_id);
+
+                const Get_Account_Balance = process.env.GET_ACCOUNT_BALANCE
+                    .replace('<billing_account_id>', billing_account_id)
+                console.log('Get_Account_Balance: ', Get_Account_Balance);
+                pool.query(Get_Account_Balance, async (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        callback(err, null);
+                    }
+                    console.log('result: ', result);
+                    const remaining_balance = result[0].balance + price;
+                    const Update_Account_Balance = process.env.UPDATE_ACCOUNT_BALANCE
+                        .replace('<billing_account_id>', billing_account_id)
+                        .replace('<remaining_balance>', remaining_balance);
+                    console.log('Update_Account_Balance: ', Update_Account_Balance);
+                    pool.query(Update_Account_Balance, async (err, result) => {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        }
+                        // console.log('result: ', result);
+                        // if (result.affectedRows > 0) {
+                        //     const orderRefundedMessage = {
+                        //         order_id,
+                        //         type: 'billing.order_refunded',
+                        //         price: price,
+                        //     };
+                        //     console.log('orderRefundedMessage: ', orderRefundedMessage);
+                        //     const RabbitConnect = await getRabbitConnect();
+                        //     await RabbitConnect.publishToExchange("ff", orderRefundedMessage);
+                        //     console.log('Message published to exchange: billing.order_refunded');
+                        callback(null, 'Refund successful');
+                        // }
+                    });
+
+                });
+            }
+        });
     }
 }
