@@ -99,18 +99,7 @@ module.exports = {
                                 }
                             });
                         }
-                        else {
-                            console.log('Insufficient Balance order_refunded');
-                            const orderRefundedMessage = {
-                                order_id,
-                                type: 'billing.order_refunded',
-                            };
-                            console.log('orderRefundedMessage: ', orderRefundedMessage);
-                            const RabbitConnect = await getRabbitConnect();
-                            await RabbitConnect.publishToExchange("ff", orderRefundedMessage);
-                            console.log('Message published to exchange: billing.order_refunded');
-                            return callback('Insufficient Balance', null);
-                        }
+                        
 
                     });
 

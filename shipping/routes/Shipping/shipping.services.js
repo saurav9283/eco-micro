@@ -52,7 +52,8 @@ module.exports = {
                             callback(err, null);
                         } else {
                             const current_stock = parseFloat(stockResult[0].quantity_on_hand);
-                            if (current_stock === 0) {
+                            console.log('current_stock: ', current_stock);
+                            if (current_stock === 0) { // Product is out of stock
                                 console.log('Product is out of stock');
                                 const OutOfStockProduct = {
                                     order_id,
@@ -62,14 +63,17 @@ module.exports = {
                                 await RabbitConnect.publishToExchange("ff", OutOfStockProduct);
 
                             }
-                            else if (current_stock < quantity) {
-                                console.log('Product is out of stock');
-                                const OutOfStockProduct = {
+                            else if (current_stock < quantity) { // stock is less than quantity
+                                console.log('stock is less than quantity order_refunded');
+                                const orderRefundedMessage = {
                                     order_id,
-                                    type: 'shipping.back_ordered'
-                                }
+                                    type: 'billing.order_refunded',
+                                };
+                                console.log('orderRefundedMessage: ', orderRefundedMessage);
                                 const RabbitConnect = await getRabbitConnect();
-                                await RabbitConnect.publishToExchange("ff", OutOfStockProduct);
+                                await RabbitConnect.publishToExchange("ff", orderRefundedMessage);
+                                console.log('Message published to exchange: billing.order_refunded');
+                                return callback('Insufficient Balance', null);
                             }
                             else if (current_stock >= quantity) {
                                 const new_stock = parseFloat(current_stock - quantity)
