@@ -1,15 +1,19 @@
 const axios = require('axios');
+const { v4: uuidv4 } = require('uuid');
+
 module.exports = {
     CreateOrderGetWayController: async (req, res) => {
         try {
             const {
-                order_id,
                 products,
                 customer_id,
                 billing_account_id,
                 billing_address,
                 shipping_address
             } = req.body;
+            const order_id = uuidv4();
+            console.log('order_id: ', order_id);
+
 
             if (!order_id || !products || !customer_id || !billing_account_id || !billing_address || !shipping_address) {
                 return res.status(400).json({ message: 'Missing required fields' });
