@@ -1,3 +1,4 @@
+require('dotenv').config();
 const amqp = require('amqplib');
 const RABBITMQ_URL = process.env.RABBIT_URL || process.env.DOCKER_IMAGE_RABBITMQ;
 const processors = require('../processer/index.js');
@@ -28,6 +29,7 @@ const subscribeToQueue = async (queueName, handleEvent) => {
                     const handlers = processors[message.type];
                     console.log('handlers: ', handlers);
                     if (!handlers || handlers.length === 0) {
+                        channel.ack(msg);
                         console.error(`No handlers found for message type: ${message.type}`);
                         return;
                     }
@@ -41,6 +43,7 @@ const subscribeToQueue = async (queueName, handleEvent) => {
 
                     channel.nack(msg, false, false);
                 }
+                
             }
         });
     } catch (error) {

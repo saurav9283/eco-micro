@@ -48,6 +48,7 @@ module.exports = {
                 if (result.length > 0) {
                     console.log('Billing Details:', result);
                     const billing_account_id = result[0].billing_account_id;
+                    console.log('billing_account_id: ', billing_account_id);
 
                     const Get_Account_Balance = process.env.GET_ACCOUNT_BALANCE
                         .replace('<billing_account_id>', billing_account_id)
@@ -73,6 +74,7 @@ module.exports = {
                             console.log('Message published to exchange: billing.payment_failed');
                         }
                         else if (result[0].balance >= price) {
+                            console.log('Sufficient Balance');
                             const remaining_balance = result[0].balance - price;
                             const Update_Account_Balance = process.env.UPDATE_ACCOUNT_BALANCE
                                 .replace('<billing_account_id>', billing_account_id)
@@ -98,6 +100,7 @@ module.exports = {
                             });
                         }
                         else {
+                            console.log('Insufficient Balance order_refunded');
                             const orderRefundedMessage = {
                                 order_id,
                                 type: 'billing.order_refunded',

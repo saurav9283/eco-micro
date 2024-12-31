@@ -48,18 +48,6 @@ app.use(function (err, req, res, next) {
 });
 
 
-// RabbitConnect.connect();
-
-RabbitConnect.connect()
-  .then(() => {
-    RabbitConnect.subscribeToQueue('sales.order_placed', (message) => {
-      console.log('Message received:', message);
-    });
-  })
-  .catch((error) => {
-    console.error('Error initializing RabbitMQ:', error);
-  });
-
 const PORT = '8000';
 server.listen(PORT, () => {
   console.log(`Billing server is running on port ${PORT}`);

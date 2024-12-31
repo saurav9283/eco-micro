@@ -1,3 +1,4 @@
+require('dotenv').config();
 const amqp = require('amqplib');
 const RABBITMQ_URL = process.env.RABBIT_URL || process.env.DOCKER_IMAGE_RABBITMQ;
 const processors = require('../processer/index.js');
@@ -5,8 +6,11 @@ const processors = require('../processer/index.js');
 let connection, channel;
 
 async function connect() {
-
+    if (!RABBITMQ_URL) {
+        throw new Error("RABBITMQ_URL is not defined in the environment variables");
+    }
     connection = await amqp.connect(RABBITMQ_URL);
+    console.log("RabbitMQ connected");
     channel = await connection.createChannel();
     console.log('Connected to RabbitMQ');
 }
@@ -25,6 +29,7 @@ const subscribeToQueue = async (queueName, handleEvent) => {
                     const handlers = processors[message.type];
                     console.log('handlers: ', handlers);
                     if (!handlers || handlers.length === 0) {
+                        channel.ack(msg);
                         console.error(`No handlers found for message type: ${message.type}`);
                         return;
                     }

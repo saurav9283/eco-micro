@@ -6,7 +6,6 @@ var http = require('http');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
-const RabbitConnect = require('./utils/Rabbitmq.js');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -46,18 +45,7 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-RabbitConnect.connect();
-RabbitConnect.connect()
-  .then(() => {
-    RabbitConnect.subscribeToQueue('billing.payment_failed');
-    RabbitConnect.subscribeToQueue('billing.order_refunded');
-    RabbitConnect.subscribeToQueue('billing.order_billed');
-    RabbitConnect.subscribeToQueue('shipping.shipping_label_created');
-    RabbitConnect.subscribeToQueue('shipping.back_ordered');
-  })
-  .catch((error) => {
-    console.error('Error initializing RabbitMQ:', error);
-  });
+
 
 const PORT = '7000';
 server.listen(PORT, () => {
