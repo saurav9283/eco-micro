@@ -46,21 +46,6 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-RabbitConnect.connect();
-
-RabbitConnect.connect()
-  .then(() => {
-    console.log('Connected to RabbitMQ');
-    RabbitConnect.subscribeToQueue('sales.order_placed', (message) => {
-      console.log('Message received:', message);
-    });
-    RabbitConnect.subscribeToQueue('billing.order_billed')
-  })
-  .catch((error) => {
-    console.error('Error initializing RabbitMQ:', error);
-  });
-
-
 const PORT = '9000';
 server.listen(PORT, () => {
   console.log(`Billing server is running on port ${PORT}`);
